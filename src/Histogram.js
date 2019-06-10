@@ -20,16 +20,18 @@ const generateData = (dataPoints, scale) => {
 			}
 
 			for (let j = dataPointIndex; j < dataPoints.length; j++) {
-				if (moment(dataPoints[j].date).clone().isBetween(currentDate.format(), currentDate.add(1, 'days').format())) {
+				// comparators must be cloned to prevent mutating the actual datetime object
+				if (moment(dataPoints[j].date).clone().isBetween(currentDate.clone().format(), currentDate.clone().add(1, 'days').format())) {
 					values.push(dataPoints[j].value)
 					dataPointIndex++
-				} else break
+				} else {
+					break
+				}
 			}
 
 			if (values.length) {
 				newDataPoint.y = _.mean(values)
 			} else if (i) {
-				console.log('in here again...')
 				// assume latest value before the bucket
 				newDataPoint.y = newData[i - 1].y
 			} 
