@@ -32,6 +32,7 @@ const updateData = (inputJson, data) => {
 		}
 		if (data[key]) {
 			data[key].push(newDataPoint)
+			data[key] = data[key].sort((a, b) => new Date(a.date) - new Date(b.date))
 		} else {
 			data[key] = [newDataPoint]
 		}
