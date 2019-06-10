@@ -16,7 +16,7 @@ const generateData = (dataPoints, scale) => {
 			const currentDate = moment(firstDate).clone().add(i, 'days').startOf('days')
 			const values = []
 			const newDataPoint = {
-				date: currentDate.format()
+				x: currentDate.format('MMM DD')
 			}
 
 			for (let j = dataPointIndex; j < dataPoints.length; j++) {
@@ -27,19 +27,14 @@ const generateData = (dataPoints, scale) => {
 			}
 
 			if (values.length) {
-				newDataPoint.value = _.mean(values)
+				newDataPoint.y = _.mean(values)
 			} else if (i) {
+				console.log('in here again...')
 				// assume latest value before the bucket
-				newDataPoint.value = newData[i - 1].value
-			} else {
-				// no data present
-				newDataPoint.value = -1
-			}
+				newDataPoint.y = newData[i - 1].y
+			} 
 			newData.push(newDataPoint)
 		}
-
-
-		console.log(newData)
 	} else {
 		let hours = moment(lastDate).diff(moment(firstDate), 'hours')
 		console.log(hours)
@@ -61,10 +56,34 @@ class Chart extends Component {
 
 
 	render() {
-		const { dataPoints, scale } = this.state
-		const data = generateData(dataPoints, scale)
+		const { feature, dataPoints, scale } = this.state
+		let rawData = generateData(dataPoints, scale)
+		let dateLabels = rawData.map(point => point.x)
 
-		return <Bar data={data} />
+		let data = {
+    labels: dateLabels,
+    datasets: [
+      {
+        label: feature,
+        data: rawData,
+      }
+    ]
+}
+
+		return (
+			<Bar
+			  data={data}
+			  options={{ 
+			  	maintainAspectRatio: false, scales: {
+	        yAxes: [{
+	            display: true,
+	            ticks: {
+	              suggestedMin: 0
+	            }
+	        }]}
+	      }}
+			/>
+		)
 	}
 
 }
