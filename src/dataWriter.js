@@ -29,21 +29,20 @@ fs.readFile("./data.json", 'utf8', (err, prevData) => {
 			data[key] = [newDataPoint]
 		}
 	})
-	console.log(data)
+
+	const stringifiedData = JSON.stringify(data)
+
+	fs.writeFile("./data.json", stringifiedData, 'utf8', err => {
+	    if (err) {
+	        console.log("An error occured while writing JSON Object to File.");
+	        return console.log(err);
+	    }
+	 
+	    console.log("JSON file has been saved.");
+	});
+
 })
 
-
-
-// let stringified = JSON.stringify(json)
-
-// fs.writeFile("./data.json", stringified, 'utf8', err => {
-//     if (err) {
-//         console.log("An error occured while writing JSON Object to File.");
-//         return console.log(err);
-//     }
- 
-//     console.log("JSON file has been saved.");
-// });
 
 
 /*
