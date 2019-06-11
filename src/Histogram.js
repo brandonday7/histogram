@@ -43,13 +43,15 @@ class Chart extends Component {
 					<Bar
 					  data={data}
 					  options={{ 
-					  	maintainAspectRatio: false, scales: {
-			        yAxes: [{
-			            display: true,
-			            ticks: {
-			              suggestedMin: 0
-			            }
-			        }]}
+					  	maintainAspectRatio: false, 
+					  	scales: {
+				        yAxes: [{
+				            display: true,
+				            ticks: {
+				              suggestedMin: 0
+				            }
+				        }]
+			      	}
 			      }}
 					/>
 					<Options 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { capitalize } from "./utils/utilities.js"
+import "./index.css"
 
 const Options = ({ changeScale, changeFeature, featureOptions }) => (
   <div>
@@ -8,7 +9,10 @@ const Options = ({ changeScale, changeFeature, featureOptions }) => (
 			<option value="hourly">Hourly</option>
 		</select>
 
-		<select onChange={evt => changeFeature(evt.target.value)}>
+		<select 
+			className="left-margin"
+			onChange={evt => changeFeature(evt.target.value)}
+		>
 			{featureOptions.map((option, index) => (
 				<option 
 					key={index} 

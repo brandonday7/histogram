@@ -1,9 +1,10 @@
 import React from 'react';
 import Histogram from "./Histogram"
+import "./index.css"
 
 const App = () => (
-  <div>
-    <h1>Data Histogram</h1>
+  <div className="container">
+    <h1>Histogram</h1>
     <Histogram />
   </div>
 )
