@@ -1,61 +1,24 @@
 import React, { Component } from 'react';
+import Options from "./Options"
 import { Bar } from "react-chartjs-2"
-import data from "./dataUtility/data.json"
-import _ from "lodash"
-import moment from "moment"
-
-const generateData = (dataPoints, scale) => {
-	const firstDate = moment(dataPoints[0].date)
-	const lastDate = moment(dataPoints[dataPoints.length - 1].date)
-	let newData = []
-	let dataPointIndex = 0
-	if (scale === "daily") {
-		let days = moment(lastDate).diff(moment(firstDate), 'days')
-
-		for (let i = 0; i <= days + 1; i++) {
-			const currentDate = moment(firstDate).clone().add(i, 'days').startOf('days')
-			const values = []
-			const newDataPoint = {
-				x: currentDate.format('MMM DD')
-			}
-
-			for (let j = dataPointIndex; j < dataPoints.length; j++) {
-				// comparators must be cloned to prevent mutating the actual datetime object
-				if (moment(dataPoints[j].date).clone().isBetween(currentDate.clone().format(), currentDate.clone().add(1, 'days').format())) {
-					values.push(dataPoints[j].value)
-					dataPointIndex++
-				} else {
-					break
-				}
-			}
-
-			if (values.length) {
-				newDataPoint.y = _.mean(values)
-			} else if (i) {
-				// assume latest value before the bucket
-				newDataPoint.y = newData[i - 1].y
-			} 
-			newData.push(newDataPoint)
-		}
-	} else {
-		let hours = moment(lastDate).diff(moment(firstDate), 'hours')
-		console.log(hours)
-	}
-
-	return newData
-}
-
+import jsonData from "./dataUtility/data.json"
+import { generateData, capitalize } from "./utils/utilities.js"
 
 class Chart extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
 			feature: "temperature",
-			dataPoints: data.temperature,
+			dataPoints: jsonData.temperature,
 			scale: "daily"
 		}
 	}
 
+	changeScale = () => this.setState({ 
+		scale: this.state.scale === "daily" ? "hourly" : "daily" 
+	})
+
+	changeFeature = feature => this.setState({ feature, dataPoints: jsonData[feature] })
 
 	render() {
 		const { feature, dataPoints, scale } = this.state
@@ -63,28 +26,36 @@ class Chart extends Component {
 		let dateLabels = rawData.map(point => point.x)
 
 		let data = {
-    labels: dateLabels,
-    datasets: [
-      {
-        label: feature,
-        data: rawData,
-      }
-    ]
-}
+	    labels: dateLabels,
+	    datasets: [
+	      {
+	        label: capitalize(feature),
+	        data: rawData,
+	      }
+	    ]
+		}
+		console.log(jsonData)
 
 		return (
-			<Bar
-			  data={data}
-			  options={{ 
-			  	maintainAspectRatio: false, scales: {
-	        yAxes: [{
-	            display: true,
-	            ticks: {
-	              suggestedMin: 0
-	            }
-	        }]}
-	      }}
-			/>
+			<div>
+				<Bar
+				  data={data}
+				  options={{ 
+				  	maintainAspectRatio: false, scales: {
+		        yAxes: [{
+		            display: true,
+		            ticks: {
+		              suggestedMin: 0
+		            }
+		        }]}
+		      }}
+				/>
+				<Options 
+					changeScale={this.changeScale} 
+					changeFeature={this.changeFeature} 
+					featureOptions={Object.keys(jsonData)}
+				/>
+			</div>
 		)
 	}
 
